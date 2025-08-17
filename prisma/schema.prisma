@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Movie {
+  id             Int             @id @default(autoincrement())
+  year           Int
+  title          String
+  winner         Boolean         @default(false)
+  movieProducers MovieProducer[]
+  movieStudios   MovieStudio[]
+
+  @@unique([year, title])
+  @@index([winner, year])
+  @@index([year, title])
+}
+
+model Producer {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  movieProducers MovieProducer[]
+
+  @@index([name])
+}
+
+model Studio {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  movieStudios MovieStudio[]
+
+  @@index([name])
+}
+
+model MovieProducer {
+  movie_id    Int
+  producer_id Int
+  movie       Movie    @relation(fields: [movie_id], references: [id])
+  producer    Producer @relation(fields: [producer_id], references: [id])
+
+  @@id([movie_id, producer_id])
+  @@index([movie_id])
+  @@index([producer_id])
+}
+
+model MovieStudio {
+  movie_id Int
+  studio_id Int
+  movie     Movie  @relation(fields: [movie_id], references: [id])
+  studio    Studio @relation(fields: [studio_id], references: [id])
+
+  @@id([movie_id, studio_id])
+  @@index([movie_id])
+  @@index([studio_id])
+}

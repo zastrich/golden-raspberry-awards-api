@@ -1,0 +1,69 @@
+{
+  "todo": [
+    {
+      "id": "10",
+      "title": "Inicializar repositório git e fazer commit do código"
+    }
+  ],
+  "in-progress": [],
+  "testing": [],
+  "done": [
+    {
+      "assignedTo": {
+        "name": "zas"
+      },
+      "creation_time": "2025-08-16T17:19:31.148Z",
+      "id": "1",
+      "references": [],
+      "title": "Benchmark para escolha das tecnologias",
+      "details": {
+        "content": "Framework: Fastify (com ESM/TS)\nDB embarcado em memória: SQLite (via better-sqlite3)\nORM: Prisma\nCSV parser: csv-parse\nValidação/Tipos: zod\nTestes de integração: vitest + @fastify/testing",
+        "mime": "text/markdown"
+      }
+    },
+    {
+      "id": "3",
+      "title": "Configurar estrutura do projeto"
+    },
+    {
+      "id": "9",
+      "title": "Criar arquivo README.md com instruções",
+      "references": []
+    },
+    {
+      "id": "6",
+      "title": "Criar endpoint específico da API para obter intervalos de prêmios dos produtores",
+      "references": []
+    },
+    {
+      "id": "5",
+      "title": "Definir entidade do filme para o banco de dados"
+    },
+    {
+      "assignedTo": {
+        "name": "zas"
+      },
+      "creation_time": "2025-08-16T21:37:13.717Z",
+      "id": "11",
+      "references": [],
+      "title": "Fazer testes de carga de banco de dados"
+    },
+    {
+      "id": "4",
+      "title": "Implementar carregamento de dados do CSV para o banco de dados na inicialização"
+    },
+    {
+      "id": "7",
+      "title": "Implementar lógica para calcular intervalos de prêmios",
+      "details": {
+        "content": "A lógica apenas no Código não ficou performática para grande bases de dados, e o mesmo ocorre no SQL quando o banco é 1 só para tudo.\n\nA melhor solução para performance, foi criar uma relação de Producers, Studios e Movies, de forma que ao trazer para o SQL a indexação do conteúdo, ele conseguiu entregar muito mais performance.",
+        "mime": "text/markdown"
+      },
+      "references": []
+    },
+    {
+      "id": "8",
+      "title": "Escrever testes de integração para o endpoint da API"
+    }
+  ]
+}

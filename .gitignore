@@ -1,0 +1,12 @@
+node_modules
+
+.env
+
+dist/*
+
+prisma/data
+prisma/migrations
+prisma/generated
+prisma/test.db
+
+challenge_files
