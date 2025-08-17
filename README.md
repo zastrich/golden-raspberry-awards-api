@@ -5,8 +5,15 @@ API REST mínima para o desafio: calcula o(s) produtor(es) com **menor** e **mai
 ## Requisitos
 - Node.js **22**+
 - npm
+- Um arquivo .CSV conforme o exemplo em `data/movies.csv`
 
 # 🚀 Rodar a aplicação da forma padrão
+
+```bash
+npm run make:all
+```
+
+# 👣 Rodar a aplicação passo a passo
 
 ## 1. Instalação de dependências
 ```bash
@@ -81,12 +88,26 @@ npm test
 ## Estrutura
 ```text
 src/
-  app.ts           # monta fastify e carrega rotas
-  server.ts        # inicia servidor
-  routes/intervals.ts
-  services/intervals.ts
-  db/index.ts
-  loaders/csv.ts
-data/movies.csv    # dataset de exemplo
-tests/intervals.e2e.test.ts
-```
+  app.ts                     # Configures Fastify and loads routes
+  server.ts                  # Starts the server
+  controllers/
+    producersController.ts   # Logic for producers
+  db/
+    createDb.ts              # Database creation and truncation logic
+    index.ts                 # Exports createDb
+  loaders/
+    index.ts                 # Exports loadCsvIntoDb
+    loadCsvIntoDb.ts         # Loads CSV data into the database
+  routes/
+    index.ts                 # Registers main routes
+    movies/
+      index.ts               # Exports movie-related routes
+      maxMinWinIntervalForProducers.ts # Endpoint for min/max win intervals
+data/
+  movies.csv                 # Consumed default dataset
+prisma/
+  schema.prisma              # Prisma schema file
+tests/
+  maxMinWinIntervalForProducers.e2e.test.ts # E2E tests for producer intervals
+  fixtures/
+    movies-test.csv            # Test data for movies

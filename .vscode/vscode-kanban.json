@@ -1,10 +1,5 @@
 {
-  "todo": [
-    {
-      "id": "10",
-      "title": "Inicializar repositório git e fazer commit do código"
-    }
-  ],
+  "todo": [],
   "in-progress": [],
   "testing": [],
   "done": [
@@ -40,6 +35,10 @@
       "title": "Definir entidade do filme para o banco de dados"
     },
     {
+      "id": "8",
+      "title": "Escrever testes de integração para o endpoint da API"
+    },
+    {
       "assignedTo": {
         "name": "zas"
       },
@@ -62,8 +61,8 @@
       "references": []
     },
     {
-      "id": "8",
-      "title": "Escrever testes de integração para o endpoint da API"
+      "id": "10",
+      "title": "Inicializar repositório git e fazer commit do código"
     }
   ]
 }
