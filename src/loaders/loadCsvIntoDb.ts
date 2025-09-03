@@ -1,17 +1,17 @@
-import fs from 'node:fs'
 import chalk from 'chalk'
-import { parse } from 'csv-parse/sync'
-import { PrismaClient } from '@prisma/client'
 
-interface MovieCsvRow {
-  year: string
-  title: string
-  studios: string
-  producers: string
-  winner: string
-}
+import { Movie, Producer, Studio } from '../db/entities/index.js'
 
-export async function loadCsvIntoDb(prisma: PrismaClient, path: string) {
+import { getDataSource } from '../db/dataSource.js'
+import { readCsvFile } from './readCsvFile.js'
+import { insertMovie } from '../db/repositories/insertMovie.js'
+import { insertProducer } from '../db/repositories/insertProducer.js'
+import { insertStudio } from '../db/repositories/insertStudio.js'
+import { splitNames } from '../helpers/string.helpers.js'
+
+export async function loadCsvIntoDb() {
+  const dataSource = await getDataSource()
+  const path = process.env.CSV_PATH ?? './data/movies.csv'
   try {
     const startTime = Date.now()
     console.log(
@@ -19,13 +19,13 @@ export async function loadCsvIntoDb(prisma: PrismaClient, path: string) {
       chalk.cyan('Initiate...'),
     )
 
-    const raw = fs.readFileSync(path, 'utf8')
-    const rows = parse(raw, {
-      columns: (header) => header.map((column) => column.toLowerCase()),
-      skip_empty_lines: true,
-      trim: true,
-      delimiter: ';',
-    }) as MovieCsvRow[]
+    const rows = readCsvFile(path)
+
+    console.log(
+      chalk.whiteBright('found'),
+      chalk.greenBright(rows.length),
+      chalk.whiteBright('rows'),
+    )
 
     const counters = {
       movies: {
@@ -42,91 +42,33 @@ export async function loadCsvIntoDb(prisma: PrismaClient, path: string) {
       },
     }
 
-    console.log(
-      chalk.whiteBright('found'),
-      chalk.greenBright(rows.length),
-      chalk.whiteBright('rows'),
-    )
+    await dataSource.transaction(async (manager) => {
+      counters.movies.start = await manager.count(Movie)
+      counters.studios.start = await manager.count(Studio)
+      counters.producers.start = await manager.count(Producer)
 
-    const splitNames = (raw: string): string[] =>
-      (raw ?? '')
-        .split(/,|\band\b/gi)
-        .map((s) => s.trim())
-        .filter(Boolean)
-
-    await prisma.$transaction(async (tx) => {
-      counters.movies.start = await tx.movie.count()
-      counters.studios.start = await tx.studio.count()
-      counters.producers.start = await tx.producer.count()
-
-      for (const r of rows) {
+      for (const movieData of rows) {
         const isWinner =
-          String(r.winner ?? '').toLowerCase() === 'yes' ||
-          String(r.winner ?? '').toLowerCase() === 'true' ||
-          String(r.winner ?? '').toLowerCase() === '1'
+          String(movieData.winner ?? '').toLowerCase() === 'yes' ||
+          String(movieData.winner ?? '').toLowerCase() === 'true' ||
+          String(movieData.winner ?? '').toLowerCase() === '1'
 
-        const movie = await tx.movie.upsert({
-          where: {
-            year_title: {
-              year: Number(r.year),
-              title: String(r.title ?? '').trim(),
-            },
-          },
-          update: {},
-          create: {
-            year: Number(r.year),
-            title: String(r.title ?? '').trim(),
-            winner: isWinner,
-          },
-        })
+        const movie = await insertMovie(dataSource, movieData, isWinner)
 
-        const producers = splitNames(String(r.producers ?? '').trim())
+        const producers = splitNames(String(movieData.producers ?? '').trim())
         for (const producerName of producers) {
-          const producer = await tx.producer.upsert({
-            where: { name: producerName },
-            update: {},
-            create: { name: producerName },
-          })
-
-          await tx.movieProducer.upsert({
-            where: {
-              movie_id_producer_id: {
-                movie_id: movie.id,
-                producer_id: producer.id,
-              },
-            },
-            update: {},
-            create: {
-              movie_id: movie.id,
-              producer_id: producer.id,
-            },
-          })
+          await insertProducer(dataSource, producerName, movie.id)
         }
 
-        const studios = splitNames(String(r.studios ?? '').trim())
+        const studios = splitNames(String(movieData.studios ?? '').trim())
         for (const studioName of studios) {
-          const studio = await tx.studio.upsert({
-            where: { name: studioName },
-            update: {},
-            create: { name: studioName },
-          })
-
-          await tx.movieStudio.upsert({
-            where: {
-              movie_id_studio_id: { movie_id: movie.id, studio_id: studio.id },
-            },
-            update: {},
-            create: {
-              movie_id: movie.id,
-              studio_id: studio.id,
-            },
-          })
+          await insertStudio(dataSource, studioName, movie.id)
         }
       }
 
-      counters.movies.final = await tx.movie.count()
-      counters.studios.final = await tx.studio.count()
-      counters.producers.final = await tx.producer.count()
+      counters.movies.final = await manager.count(Movie)
+      counters.studios.final = await manager.count(Studio)
+      counters.producers.final = await manager.count(Producer)
     })
 
     console.log(

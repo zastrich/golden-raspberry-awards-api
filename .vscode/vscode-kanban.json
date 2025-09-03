@@ -5,6 +5,48 @@
   "done": [
     {
       "assignedTo": {
+        "name": "zastrich"
+      },
+      "creation_time": "2025-09-03T17:03:30.963Z",
+      "description": {
+        "content": "Modificado para que o resultado venha diretamente da base de dados, evitando o processamento no código.",
+        "mime": "text/markdown"
+      },
+      "id": "14",
+      "references": [],
+      "title": "Lógica ineficiente, o sistema utiliza 6 loops para chegar ao resultado",
+      "type": "emergency"
+    },
+    {
+      "assignedTo": {
+        "name": "zastrich"
+      },
+      "creation_time": "2025-09-03T17:03:00.427Z",
+      "details": {
+        "content": "o teste agora monta a aplicação e aguarda o resultado, enquanto roda o mesmo processo que traz o resultado, dessa forma usa o mesmo arquivo CSV, por conta desse motivo, removi a possibilidade de iniciar a aplicação com diferentes CSVs",
+        "mime": "text/markdown"
+      },
+      "id": "13",
+      "references": [],
+      "title": "Requisito não funcional 2: O teste utiliza um arquivo diferente do que a aplicação usa, por isso após alterar o arquivo utilizado pela aplicação o teste não falhou",
+      "type": "emergency"
+    },
+    {
+      "assignedTo": {
+        "name": "zastrich"
+      },
+      "creation_time": "2025-09-03T17:02:41.125Z",
+      "description": {
+        "content": "Após avaliar que o prisma não oferece suporte ao banco de dados em memória (tem apenas um estudo early sobre essa possibilidade), troquei o Prisma pelo TypeORM, isso implicou em uma série de mudanças de código",
+        "mime": "text/markdown"
+      },
+      "id": "12",
+      "references": [],
+      "title": "Requisito não funcional 3: O banco de dados deve estar somente em memória, porém ao subir a aplicação foi criado um arquivo físico no disco",
+      "type": "emergency"
+    },
+    {
+      "assignedTo": {
         "name": "zas"
       },
       "creation_time": "2025-08-16T17:19:31.148Z",

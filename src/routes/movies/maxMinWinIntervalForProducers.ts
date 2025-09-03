@@ -18,7 +18,7 @@ export const maxMinWinIntervalForProducers = async (
   request: FastifyRequest,
   reply: FastifyReply,
 ) => {
-  const result = await getProducerWinIntervals(request.server.locals.prisma)
+  const result = await getProducerWinIntervals()
 
   return reply.send(ResponseSchema.parse(result))
 }

@@ -1,0 +1,5 @@
+export * from './Movie.js'
+export * from './Producer.js'
+export * from './Studio.js'
+export * from './MovieProducer.js'
+export * from './MovieStudio.js'
