@@ -7,30 +7,26 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx src/server.ts",
     "start": "node dist/src/server.js",
     "build": "tsc -p tsconfig.json",
-    "prisma:start": "prisma migrate dev --name add_tables",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "test": "npm run prisma:migrate && vitest run",
+    "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "make:all": "npm install && node -e \"require('fs').copyFileSync('example.env', '.env')\" && npm run prisma:start && npm run test && npm run build && npm start"
+    "lint": "eslint . --ext .ts,.mjs",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx,.mjs --fix",
+    "make:all": "npm install && node --input-type=module -e \"import { copyFileSync } from 'fs'; copyFileSync('example.env', '.env');\" && npm run test && npm run build && npm start"
   },
   "dependencies": {
-    "@prisma/client": "^6.14.0",
-    "better-sqlite3": "^12.2.0",
     "chalk": "^5.5.0",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.1",
     "fastify": "^5.5.0",
-    "prisma": "^6.14.0",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.26",
+    "vite-tsconfig-paths": "^5.1.4",
     "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.3.0",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",

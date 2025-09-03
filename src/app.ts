@@ -1,36 +1,37 @@
 import Fastify from 'fastify'
 import chalk from 'chalk'
-import { createDb } from './db/index.js'
 import { loadCsvIntoDb } from './loaders/index.js'
 import { registerRoutes } from './routes/index.js'
-import { PrismaClient } from '@prisma/client'
+import { initializeDataSource } from './db/dataSource.js'
 
-export async function buildApp(csvPath: string) {
-  const app = Fastify({ logger: false })
+export async function buildApp() {
+  try {
+    const startTime = Date.now()
 
-  console.log(chalk.blue('Establishing database connection\n'))
-  const prisma = await createDb()
-  await loadCsvIntoDb(prisma, csvPath)
-  console.log(chalk.greenBright(`Database connected and prepared\n`))
+    await initializeDataSource()
 
-  app.decorate('locals', { prisma })
+    await loadCsvIntoDb()
 
-  registerRoutes(app)
+    const app = Fastify({ logger: false })
+    registerRoutes(app)
 
-  console.log(
-    chalk.greenBright(`Server listening on:`),
-    chalk.cyanBright(
-      `http://localhost:${process.env.PORT}/api/movies/maxMinWinIntervalForProducers`,
-    ),
-  )
+    console.log(
+      chalk.greenBright('Application built successfully'),
+      chalk.cyan(`(${(Date.now() - startTime) / 1000} seconds)\n`),
+      chalk.greenBright('Server will listen on:'),
+      chalk.cyanBright(
+        `http://localhost:${process.env.PORT}/api/movies/maxMinWinIntervalForProducers`,
+      ),
+    )
 
-  return app
-}
-
-declare module 'fastify' {
-  interface FastifyInstance {
-    locals: {
-      prisma: PrismaClient
-    }
+    return app
+  } catch (error) {
+    console.log(
+      chalk.bgRedBright('ERROR'),
+      chalk.redBright(
+        `Failed to build application: ${error instanceof Error ? error.message : String(error)}`,
+      ),
+    )
+    throw error
   }
 }
